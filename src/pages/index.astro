@@ -1,0 +1,72 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { GALLERY } from '../config';
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+<Base>
+  <section class="section">
+    <div class="wrap split">
+      <div>
+        <h1>Finding quiet communion in the rhythm of <em>daily prayer</em></h1>
+        <p class="lead">PrayerHabit gathers simple reflections, daily scripture petitions, and preserved written prayers to help you cultivate stillness with God.</p>
+        <a class="btn" href="/gallery/">View the Gallery</a>
+      </div>
+      <img class="rounded" src="/images/Praying.jpg" alt="Nature Prayer" width="800" height="600" fetchpriority="high" />
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="wrap">
+      <h2>Preserved prayers from <em>hands of faith</em></h2>
+      <div class="grid3">
+        {GALLERY.slice(0, 3).map((g) => (
+          <a href="/gallery/"><img src={g.src} alt={g.alt} loading="lazy" /></a>
+        ))}
+      </div>
+      <a class="btn" href="/gallery/">View the full gallery</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="narrow">
+      <h2>Latest from the blog</h2>
+      {posts.map((p) => (
+        <article class="post-card">
+          {p.data.image && <img src={p.data.image} alt={p.data.imageAlt ?? ''} loading="lazy" />}
+          <div>
+            <h3><a href={`/blog/${p.id}/`}>{p.data.title}</a></h3>
+            <p>{p.data.description}</p>
+          </div>
+        </article>
+      ))}
+      <p><a class="btn" href="/blog/">Read the blog</a></p>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="wrap split">
+      <div>
+        <h2>A ministry devoted to the <em>sacred cadence</em> of prayer</h2>
+        <p>PrayerHabit began with a humble desire to help believers rediscover prayer not as an obligation, but as a peaceful sanctuary of daily communion with Christ.</p>
+        <p>Through accessible guided reflections and archived historical prayers, we encourage believers to build unshakeable spiritual rhythms that anchor everyday life.</p>
+        <a class="btn" href="/about-us/">Learn more about us</a>
+      </div>
+      <img class="rounded" src="/images/chapel_interior_sunlight.webp" alt="Sunlight inside a quiet chapel" loading="lazy" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split reverse">
+      <div>
+        <h2>We would be honored to <em>pray alongside you</em></h2>
+        <p>Whether you carry a joyful thanksgiving or a heavy personal burden, our community is here to lift your petitions before the Lord in quiet intercession.</p>
+        <a class="btn" href="/contact-us/">Send a prayer request</a>
+      </div>
+      <img class="rounded" src="/images/chapel_beeswax_candle.webp" alt="A beeswax candle burning in a chapel" loading="lazy" />
+    </div>
+  </section>
+</Base>

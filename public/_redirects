@@ -1,0 +1,7 @@
+# Preserve the old WordPress post URL
+/2026/10/27/hello-world/  /blog/courage/  301
+/hello-world/             /blog/courage/  301
+# Old WordPress system URLs
+/feed/                    /blog/          302
+/wp-login.php             /               302
+/wp-admin/*               /               302

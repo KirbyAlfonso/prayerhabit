@@ -1,0 +1,70 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../config';
+---
+<Base title="Contact Us" description="Send a prayer request, an inquiry about our manuscript archive, or a note of testimony.">
+  <section class="page-head wrap">
+    <h1>Connect with our <em>prayer fellowship</em></h1>
+    <p class="lead">We welcome your personal prayer petitions, inquiries regarding our manuscript archive, or notes of testimony. Every message is received with reverence and kept in confidence.</p>
+  </section>
+
+  <section class="wrap">
+    <div class="contact-grid">
+      <dl class="info">
+        {SITE.email && (<><dt>Email Inquiries</dt><dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd></>)}
+        {SITE.phone && (<><dt>Telephone</dt><dd><a href={`tel:${SITE.phone.replace(/\s/g, '')}`}>{SITE.phone}</a></dd></>)}
+        {SITE.address && (<><dt>Ministry Address</dt><dd>{SITE.address}</dd></>)}
+      </dl>
+
+      <form class="contact" id="contact-form" method="post" action="/api/contact">
+        <label>Your Name <input name="name" required maxlength="100" autocomplete="name" /></label>
+        <label>Email Address <input name="email" type="email" required maxlength="200" autocomplete="email" /></label>
+        <label>Subject of Petition <input name="subject" required maxlength="150" /></label>
+        <label>Your Prayer Request or Message <textarea name="message" rows="6" required maxlength="5000"></textarea></label>
+        <!-- honeypot: real visitors never see or fill this -->
+        <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off" /></label></div>
+        <button class="btn" type="submit">Send prayer message</button>
+        <p class="status" id="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const status = document.getElementById('form-status') as HTMLElement;
+  const btn = form.querySelector('button') as HTMLButtonElement;
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('sent') === '1') show('ok', 'Thank you. Your message has been received.');
+  if (params.get('error') === '1') show('err', 'Sorry, something went wrong. Please try again.');
+
+  function show(kind: 'ok' | 'err', msg: string) {
+    status.className = 'status ' + kind;
+    status.textContent = msg;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.disabled = true;
+    show('ok', 'Sending…');
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) {
+        form.reset();
+        show('ok', 'Thank you. Your message has been received and we will lift it in prayer.');
+      } else {
+        show('err', data.error || 'Sorry, something went wrong. Please try again.');
+      }
+    } catch {
+      show('err', 'Network error. Please check your connection and try again.');
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>

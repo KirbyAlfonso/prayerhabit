@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import { GALLERY } from '../config';
+---
+<Base title="Gallery" description="Archive of scanned prayers from original notebooks, family Bibles, and handwritten devotional journals.">
+  <section class="page-head wrap">
+    <p class="eyebrow">Manuscript Archive</p>
+    <h1>Archive of <em>scanned prayers</em></h1>
+    <p class="lead">Each page below has been carefully scanned from original notebooks, family Bibles, and handwritten devotional journals.</p>
+  </section>
+  <section class="wrap">
+    <div class="grid3">
+      {GALLERY.map((g) => (
+        <a href={g.src} target="_blank" rel="noopener"><img src={g.src} alt={g.alt} loading="lazy" /></a>
+      ))}
+    </div>
+  </section>
+</Base>
